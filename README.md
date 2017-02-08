@@ -1,4 +1,8 @@
-#Simple Socket.IO Webchat
+#socket-webchat
+
+A simple webchat application built using Socket.IO.
+
+*Status:* Work in progress.
 
 ##Screenshot
 ![Screenshot](./screenshots/chat.png "Screenshot")
@@ -36,3 +40,7 @@
 - [ ] Implement accounts/admin status
 - [ ] Implement /stopserver to stop the server
 - [ ] Make ban messages bold
+
+***
+
+[https://github.com/cjlh/socket-webchat](https://github.com/cjlh/socket-webchat)
