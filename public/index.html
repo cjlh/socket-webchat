@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+	<title>Chat</title>
+	<link rel="stylesheet" type="text/css" href="/public/style/main.css" />
+</head>
+<body>
+	<div id="username_popup">
+		<form id="username_form" action="">
+			<input id="username_input" type="text" placeholder="choose a username" autocomplete="off" />
+		</form>
+		<div class="popup-footer">socket.io webchat by caleb hamilton</div>
+	</div>
+	<ul id="messages"></ul>
+	<form id ="msg-form" action="">
+		<input id="message" autocomplete="off" />
+	</form>
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/public/js/client.min.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+	<script>
+		$(document).ready( function(){
+			var height = $(window).height() - 50;
+			$('#messages').css('max-height', height);
+			$('#messages').css('min-height', height);
+		    $("#username_input").focus();
+	        var audioElement = document.createElement('audio');
+	        audioElement.setAttribute('src', '/public/audio/message.ogg');
+	        $.get();
+	        audioElement.addEventListener("load", function() {
+	       		audioElement.play();
+	        }, true);
+
+			$('#username_form').submit(function() {
+				event.preventDefault();
+				username = $('#username_input').val();
+				if (!((username.trim()).length > 0)) {
+					return false;
+				}
+				$('#username_popup').toggle();
+
+				var client = new ClientJS();
+				var fingerprint = client.getFingerprint();
+				var socket = io( {query: 'username=' + username + '&fingerprint=' + fingerprint} );
+				var colors = ['red', 'orange', 'yellow', 'blue', 'green', 'purple', 'grey'];
+				var user_color = colors[Math.floor(Math.random()*colors.length)];
+
+				var isFocused = true;
+				$(window).on("blur focus", function(e) {
+				    var prevType = $(this).data("prevType");
+				    if (prevType != e.type) {
+				        switch (e.type) {
+				            case "blur":
+				            	isFocused = false;
+				                break;
+				            case "focus":
+				                isFocused = true;
+				                break;
+				        }
+				    }
+				    $(this).data("prevType", e.type);
+				});
+
+				socket.on('connect', function() {
+					socket.on('connection rejected', function(){
+						$('#username_popup').toggle();
+					});
+					socket.emit('user connect', username);
+		    		$('#message').focus();
+					$('#msg-form').submit(function(){
+						socket.emit('chat message', { user: username, color: user_color, content: $('#message').val() });
+						$('#message').val('');
+						return false;
+					});
+					socket.on('chat message', function(data){
+						var li = $('<li />', { text: ' ' + data.content, class: 'message' });
+						var al = $('<span />', { text: '' + data.user + ':', 'class': 'message-username message-' + data.color });
+						li.prepend(al);
+						$('#messages').append(li);
+						$('#messages').scrollTop(1E10);
+						if (isFocused == false) {
+							$(document).ready(function() {
+	        					audioElement.play();
+						    });
+						}
+					});
+					socket.on('broadcast', function(message){
+						var broadcast = $('<li />', { text: message, class: 'message message-broadcast' });
+						$('#messages').append(broadcast);
+						$('#messages').scrollTop(1E10);
+					});
+					socket.on('incoming pm', function(data){
+						var li = $('<li />', { text: ' ' + data.content, class: 'message message-private' });
+						var al = $('<span />', { text: data.user + ' to you:', 'class': 'message-username' });
+						li.prepend(al);
+						$('#messages').append(li);
+						$('#messages').scrollTop(1E10);
+						if (isFocused == false) {
+							$(document).ready(function() {
+	        					audioElement.play();
+						    });
+						}
+					});
+					socket.on('outgoing pm', function(data){
+						var li = $('<li />', { text: ' ' + data.content, class: 'message message-private' });
+						var al = $('<span />', { text: 'you to ' + data.user + ':', 'class': 'message-username' });
+						li.prepend(al);
+						$('#messages').append(li);
+						$('#messages').scrollTop(1E10);
+					});
+					socket.on('clear messages', function(){
+						var message_list = document.getElementById("messages");
+						while (message_list.firstChild) {
+						    message_list.removeChild(message_list.firstChild);
+						}
+					});
+					socket.on('user connect', function(msg){
+						var notice = $('<li />', { class: 'message message-connect' });
+						var notice_username = $('<span />', { text: msg, class: 'message-username' });
+						notice.append(document.createTextNode('user '));
+						notice.append(notice_username);
+						notice.append(document.createTextNode(' connected'));
+						$('#messages').append(notice);
+						$('#messages').scrollTop(1E10);
+					});
+					socket.on('user disconnect', function(msg){
+						var notice = $('<li />', { class: 'message message-disconnect' });
+						var notice_username = $('<span />', { text: msg, class: 'message-username' });
+						notice.append(document.createTextNode('user '));
+						notice.append(notice_username);
+						notice.append(document.createTextNode(' disconnected'));
+						$('#messages').append(notice);
+						$('#messages').scrollTop(1E10);
+					});
+		        });
+			});
+		});
+	</script>
+</body>
+</html>

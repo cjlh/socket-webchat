@@ -1,0 +1,12 @@
+{
+  "name": "socket-webchat",
+  "version": "1.0.0",
+  "author": "Caleb Hamilton",
+  "description": "A simple webchat application built using Socket.IO.",
+  "dependencies": {
+    "express": "^4.14.1",
+    "jquery": "^3.1.1",
+    "socket.io": "^1.7.1"
+  },
+  "license": "MIT"
+}
