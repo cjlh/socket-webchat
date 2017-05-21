@@ -4,7 +4,7 @@ A simple webchat application built using Socket.IO.
 
 *Status:* Work in progress.
 
-##S creenshot
+## Screenshot
 ![Screenshot](./screenshots/chat.png "Screenshot")
 
 ## Features
