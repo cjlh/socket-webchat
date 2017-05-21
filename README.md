@@ -1,13 +1,13 @@
-#socket-webchat
+# socket-webchat
 
 A simple webchat application built using Socket.IO.
 
 *Status:* Work in progress.
 
-##Screenshot
+##S creenshot
 ![Screenshot](./screenshots/chat.png "Screenshot")
 
-##Features
+## Features
 * Real-time chat application
 * View chat and broadcasts from server console
 * Coloured names
@@ -26,14 +26,14 @@ A simple webchat application built using Socket.IO.
 	* /banfingerprint
 	* /unbanfingerprint
 
-##How to use
+## How to use
 1. Install Node.js along with the following modules:
 	* express
 	* socket.io
 2. Run the server with node.js:
 	`node /path/to/index.js`
 
-##Todo
+## Todo
 - [ ] Implement /whois to view aliases
 - [ ] Implement /fingerprint to fetch fingerprint
 - [ ] Implement /reply to reply to direct messages
